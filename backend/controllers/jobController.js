@@ -95,6 +95,9 @@ export const deleteJob = async (req, res) => {
         }
         res.json({ message: "Job deleted successfully" });
     } catch (err) {
+        if (err.message.includes('foreign key constraint')) {
+            return res.status(409).json({ error: 'Cannot delete job with existing applications. Remove or reassign applications first.' });
+        }
         res.status(500).json({ error: err.message });
     }
 };

@@ -60,6 +60,9 @@ export const deleteInterviewer = async (req, res) => {
         if (result.rows.length === 0) return res.status(404).json({ error: "Interviewer not found or unauthorized" });
         res.json({ message: "Interviewer deleted successfully." });
     } catch (err) {
+        if (err.message.includes('foreign key constraint')) {
+            return res.status(409).json({ error: 'Cannot delete interviewer with scheduled interviews. Reassign interviews first.' });
+        }
         res.status(500).json({ error: err.message });
     }
 };
