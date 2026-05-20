@@ -4,6 +4,7 @@
 
 **NeonDB Connection String:**
 ```
+postgresql://neondb_owner:npg_8BzKWoRlNvx7@ep-aged-scene-aqpz1ddy.c-8.us-east-1.aws.neon.tech/neondb?sslmode=verify-full
 ```
 
 ---
@@ -16,12 +17,9 @@ Set these in Vercel Dashboard → Backend Project → Settings → Environment V
 | Key | Value |
 |-----|-------|
 | `PORT` | `5000` |
-| `DB_USER` | `neondb_owner` |
-| `DB_HOST` | `ep-blue-rain-aq4iqox5.c-8.us-east-1.aws.neon.tech` |
-| `DB_DATABASE` | `neondb` |
-| `DB_PASSWORD` | `npg_6BoFVI1RGUgr` |
-| `DB_PORT` | `5432` |
-| `JWT_SECRET` | Generate a secure random string |
+| `DATABASE_URL` | `postgresql://neondb_owner:npg_8BzKWoRlNvx7@ep-aged-scene-aqpz1ddy.c-8.us-east-1.aws.neon.tech/neondb?sslmode=verify-full` |
+| `JWT_SECRET` | `9491312d93e15c7344346e239d06842bc51a53f9ed524dcdf2ac60bde103f3a5d0fe7c17d9449d861f5c8298937bbb47f8908fdf4b2334f1342b95b3b99aabe6` |
+| `JWT_REFRESH_SECRET` | `407a0cc5f94dd60335ecbf8c4581ab20999bfdc5f19deab7d1a32580360a77c09a15c28506de88390a33d8eeec78ffbc6635fd27fc75011507d529837358f3c9` |
 | `NODE_ENV` | `production` |
 
 ### Deployment Steps:

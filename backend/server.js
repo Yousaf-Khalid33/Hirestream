@@ -11,18 +11,10 @@ import userRoutes from './routes/userRoutes.js';
 dotenv.config();
 const app = express();
 
-const corsOptions = {
-  origin: '*',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  allowedHeaders: '*',
-  credentials: true,
-};
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+app.use(cors({ origin: '*', methods: '*', allowedHeaders: '*' }));
 
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ extended: true, limit: '20mb' }));
-
 
 // ROUTE MIDDLEWARE
 app.use('/api/auth', authRoutes); // All auth routes will start with /api/auth
