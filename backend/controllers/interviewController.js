@@ -31,12 +31,34 @@ export const scheduleInterview = async (req, res) => {
     }
 };
 
+export const getTopProfiles = async (req, res) => {
+    const interviewer_id = req.user.id;
+
+    try {
+        const result = await query(
+            `SELECT DISTINCT ON (u.id) u.id AS candidate_id, u.name AS candidate_name, u.email AS candidate_email,
+                    u.profile_picture AS candidate_profile_picture, j.title AS job_title, i.interview_date
+             FROM interviews i
+             JOIN applications a ON i.application_id = a.id
+             JOIN users u ON a.candidate_id = u.id
+             JOIN jobs j ON a.job_id = j.id
+             WHERE i.interviewer_id = $1
+             ORDER BY u.id, i.interview_date DESC
+             LIMIT 3`,
+            [interviewer_id]
+        );
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
 export const getInterviewerSchedule = async (req, res) => {
     const interviewer_id = req.user.id;
 
     try {
         const result = await query(
-            `SELECT i.*, a.status AS application_status, a.candidate_id, u.name AS candidate_name, u.email AS candidate_email, j.title AS job_title,
+            `SELECT i.*, a.status AS application_status, a.candidate_id, u.name AS candidate_name, u.email AS candidate_email, u.profile_picture AS candidate_profile_picture, j.title AS job_title,
                     f.id AS feedback_id, f.comments AS feedback_comments, f.rating AS feedback_rating
              FROM interviews i
              JOIN applications a ON i.application_id = a.id

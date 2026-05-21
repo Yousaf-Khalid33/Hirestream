@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
-import { CalendarDays, Clock, UserCheck, ClipboardList, Star, ArrowLeft } from 'lucide-react';
+import { CalendarDays, Clock, UserCheck, ClipboardList, Star, ArrowLeft, User } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function InterviewerDashboard() {
     const [interviews, setInterviews] = useState([]);
+    const [topProfiles, setTopProfiles] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [feedbackInputs, setFeedbackInputs] = useState({});
@@ -13,10 +14,14 @@ export default function InterviewerDashboard() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const loadSchedule = async () => {
+        const loadData = async () => {
             try {
-                const res = await api.get('/interviews/my-interviews');
-                setInterviews(res.data);
+                const [scheduleRes, profilesRes] = await Promise.all([
+                    api.get('/interviews/my-interviews'),
+                    api.get('/interviews/top-profiles'),
+                ]);
+                setInterviews(scheduleRes.data);
+                setTopProfiles(profilesRes.data);
             } catch (err) {
                 console.error('Unable to load your schedule', err);
                 setError('Could not load your interviews.');
@@ -25,7 +30,7 @@ export default function InterviewerDashboard() {
             }
         };
 
-        loadSchedule();
+        loadData();
     }, []);
 
     const upcoming = interviews.filter((item) => new Date(item.interview_date) >= new Date()).length;
@@ -126,6 +131,35 @@ export default function InterviewerDashboard() {
                         <p className="text-slate-500">Your schedule syncs automatically from recruiter assignments.</p>
                     </div>
                 </section>
+
+                {topProfiles.length > 0 && (
+                    <section className="mb-8">
+                        <div className="flex items-center gap-3 mb-5">
+                            <User size={22} className="text-indigo-600" />
+                            <h2 className="text-2xl font-bold text-slate-900">Top Profiles</h2>
+                        </div>
+                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            {topProfiles.map((profile) => (
+                                <div key={profile.candidate_id} className="rounded-3xl bg-white p-5 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+                                    <div className="flex items-center gap-4">
+                                        {profile.candidate_profile_picture ? (
+                                            <img src={profile.candidate_profile_picture} alt="" className="w-14 h-14 rounded-full object-cover border-2 border-indigo-200" />
+                                        ) : (
+                                            <div className="w-14 h-14 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-lg">
+                                                {profile.candidate_name?.charAt(0).toUpperCase()}
+                                            </div>
+                                        )}
+                                        <div className="min-w-0">
+                                            <h3 className="font-semibold text-slate-900 truncate">{profile.candidate_name}</h3>
+                                            <p className="text-sm text-slate-500 truncate">{profile.candidate_email}</p>
+                                            <p className="text-xs text-indigo-600 font-medium mt-1 truncate">{profile.job_title}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
 
                 <section className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6">
                     <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">

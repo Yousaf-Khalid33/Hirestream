@@ -1,5 +1,5 @@
 import express from 'express';
-import { scheduleInterview, getInterviewerSchedule } from '../controllers/interviewController.js';
+import { scheduleInterview, getInterviewerSchedule, getTopProfiles } from '../controllers/interviewController.js';
 import { verifyToken, authorizeRole } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -9,5 +9,8 @@ router.post('/schedule', verifyToken, authorizeRole(['recruiter']), scheduleInte
 
 // Only interviewers can see their own schedule
 router.get('/my-interviews', verifyToken, authorizeRole(['interviewer']), getInterviewerSchedule);
+
+// Interviewer top candidate profiles
+router.get('/top-profiles', verifyToken, authorizeRole(['interviewer']), getTopProfiles);
 
 export default router;
