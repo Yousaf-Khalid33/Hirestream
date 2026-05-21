@@ -176,6 +176,7 @@ export default function RecruiterApplications() {
                                                 candidate_id: app.candidate_id,
                                                 candidate_name: app.candidate_name,
                                                 candidate_email: app.candidate_email,
+                                                candidate_profile_picture: app.candidate_profile_picture,
                                                 applications: []
                                             };
                                         }
@@ -183,9 +184,18 @@ export default function RecruiterApplications() {
                                         return acc;
                                     }, {})).map((candidate) => (
                                         <div key={candidate.candidate_id} className="rounded-3xl border border-slate-200 p-6 hover:shadow-md transition-shadow">
-                                            <div className="mb-4">
-                                                <h3 className="text-xl font-semibold text-slate-900">{candidate.candidate_name}</h3>
-                                                <p className="text-slate-500">{candidate.candidate_email}</p>
+                                            <div className="mb-4 flex items-center gap-4">
+                                                {candidate.candidate_profile_picture ? (
+                                                    <img src={candidate.candidate_profile_picture} alt="" className="w-14 h-14 rounded-full object-cover border-2 border-indigo-200" />
+                                                ) : (
+                                                    <div className="w-14 h-14 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-lg">
+                                                        {candidate.candidate_name?.charAt(0).toUpperCase()}
+                                                    </div>
+                                                )}
+                                                <div>
+                                                    <h3 className="text-xl font-semibold text-slate-900">{candidate.candidate_name}</h3>
+                                                    <p className="text-slate-500">{candidate.candidate_email}</p>
+                                                </div>
                                             </div>
                                             <div className="space-y-4">
                                                 {candidate.applications.map((app) => (

@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 export const register = async (req, res) => {
-    const { name, email, password, role, company_name } = req.body;
+    const { name, email, password, role, company_name, profile_picture } = req.body;
     try {
         // 1. Block Interviewer self-registration
         if (role === 'interviewer') {
@@ -26,8 +26,8 @@ export const register = async (req, res) => {
         const status = (role === 'recruiter') ? 'pending' : 'active';
 
         const result = await query(
-            'INSERT INTO users (name, email, password, role, status, company_name) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, name, email, role, status, company_name',
-            [name, email, hashedPassword, role, status, role === 'recruiter' ? company_name : null]
+            'INSERT INTO users (name, email, password, role, status, company_name, profile_picture) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, name, email, role, status, company_name, profile_picture',
+            [name, email, hashedPassword, role, status, role === 'recruiter' ? company_name : null, role === 'candidate' ? (profile_picture || null) : null]
         );
 
         const message = (role === 'recruiter') 
@@ -65,7 +65,7 @@ export const login = async (req, res) => {
             { expiresIn: '1d' }
         );
 
-        res.json({ token, user: { id: user.id, name: user.name, role: user.role } });
+        res.json({ token, user: { id: user.id, name: user.name, role: user.role, profile_picture: user.profile_picture } });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

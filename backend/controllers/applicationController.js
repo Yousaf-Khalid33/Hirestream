@@ -46,7 +46,7 @@ export const getApplications = async (req, res) => {
 
     try {
         let sql = `
-            SELECT a.*, j.title as job_title, u.name as candidate_name, u.email as candidate_email
+            SELECT a.*, j.title as job_title, u.name as candidate_name, u.email as candidate_email, u.profile_picture as candidate_profile_picture
             FROM applications a
             JOIN jobs j ON a.job_id = j.id
             JOIN users u ON a.candidate_id = u.id

@@ -39,6 +39,13 @@ async function migrate() {
         `);
 
         await client.query(`
+            DO $$ BEGIN
+                ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_picture TEXT;
+            EXCEPTION WHEN others THEN NULL;
+            END $$;
+        `);
+
+        await client.query(`
             CREATE TABLE IF NOT EXISTS jobs (
                 id SERIAL PRIMARY KEY,
                 title VARCHAR(255) NOT NULL,

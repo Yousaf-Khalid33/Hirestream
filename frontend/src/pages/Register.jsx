@@ -1,11 +1,26 @@
 import { useState } from 'react';
 import api from '../api/axios';
 import { Link } from 'react-router-dom';
-import { Briefcase, UserCheck } from 'lucide-react'; // Removed UserPlus
+import { Briefcase, UserCheck, Camera } from 'lucide-react';
 
 export default function Register() {
-    const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'candidate', company_name: '' });
+    const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'candidate', company_name: '', profile_picture: '' });
+    const [profilePreview, setProfilePreview] = useState('');
     const [message, setMessage] = useState('');
+
+    const handleProfilePic = (file) => {
+        if (!file) {
+            setProfilePreview('');
+            setFormData({ ...formData, profile_picture: '' });
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+            setProfilePreview(reader.result);
+            setFormData({ ...formData, profile_picture: reader.result });
+        };
+        reader.readAsDataURL(file);
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -38,6 +53,27 @@ export default function Register() {
                     {formData.role === 'recruiter' && (
                         <input type="text" placeholder="Company Name" className="w-full p-3 border rounded-lg" 
                             onChange={(e) => setFormData({...formData, company_name: e.target.value})} required />
+                    )}
+
+                    {formData.role === 'candidate' && (
+                        <div className="mt-4">
+                            <label className="block text-sm font-medium text-slate-700 mb-2">Profile Picture (optional)</label>
+                            <div className="flex items-center gap-4">
+                                <label className="cursor-pointer flex items-center gap-2 px-4 py-2.5 border rounded-lg bg-white hover:bg-slate-50 transition">
+                                    <Camera size={18} className="text-indigo-600" />
+                                    <span className="text-sm text-slate-600">Choose photo</span>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={(e) => handleProfilePic(e.target.files[0])}
+                                    />
+                                </label>
+                                {profilePreview && (
+                                    <img src={profilePreview} alt="Preview" className="w-12 h-12 rounded-full object-cover border-2 border-indigo-200" />
+                                )}
+                            </div>
+                        </div>
                     )}
 
                     <div className="grid grid-cols-2 gap-4 mt-4">
